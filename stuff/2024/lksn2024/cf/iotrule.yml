@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: template for lks iot rules
+
+Resources:
+  Rule1:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: lks_datastream_jawatimur
+      TopicRulePayload: 
+        Actions: 
+          - Kinesis:
+              StreamName: lksdatastreamiot
+              RoleArn: arn:aws:iam::342942590686:role/LabRole
+        Description: Rules for Devices connect to Analytics
+        RuleDisabled: false
+        Sql: SELECT * FROM 'datasensor'
+
+  Rule2:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: lks_firehose_jawatimur
+      TopicRulePayload: 
+        Actions: 
+          - Firehose:
+              DeliveryStreamName: LKS-Firehose-2024
+              RoleArn: arn:aws:iam::342942590686:role/LabRole
+        Description: Rules for Devices connect to Kinesis
+        RuleDisabled: false
+        Sql: SELECT * FROM 'datasensor'
+

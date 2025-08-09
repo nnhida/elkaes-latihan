@@ -1,0 +1,4 @@
+curl -X PUT -H 'Content-Type: application/json' -d '{"id":"99","price":"2000","name":"Anggur"}' https://abtam1u08b.execute-api.us-east-1.amazonaws.com/dev/products
+curl https://abtam1u08b.execute-api.us-east-1.amazonaws.com/dev/products -H "Accept:application/json"
+curl https://abtam1u08b.execute-api.us-east-1.amazonaws.com/dev/products/{id} -H "Accept:application/json"
+curl -X DELETE https://abtam1u08b.execute-api.us-east-1.amazonaws.com/dev/products/{id}

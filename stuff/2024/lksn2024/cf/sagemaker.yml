@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: template for lks iot
+
+Resources:
+  notebook:
+    Type: AWS::SageMaker::NotebookInstance
+    Properties:
+      InstanceType: ml.t3.medium
+      NotebookInstanceName: iotml-jawatimur
+      PlatformIdentifier: notebook-al2-v2
+      RoleArn: arn:aws:iam::342942590686:role/LabRole

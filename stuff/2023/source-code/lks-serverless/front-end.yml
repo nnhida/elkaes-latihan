@@ -1,0 +1,22 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci --cache .npm --prefer-offline
+        build:
+          commands:
+            - echo "VITE_BASE_API_URL=https://7p7u9vp21e.execute-api.us-east-1.amazonaws.com/prod" >> .local.env
+            - echo "VITE_WEBSOCKET_URL=wss://8i42q3ur4e.execute-api.us-east-1.amazonaws.com/dev" >> .local.env
+            - echo "VITE_API_TOKEN=7de88ac06c1d0f41e7c5fa887638c841" >> .local.env
+            - echo "VITE_DEVICE_ID=frontEnd-001" >> .local.env
+            - npm run build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - .npm/**/*
+    appRoot: front-end

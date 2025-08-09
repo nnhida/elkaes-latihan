@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+    redis:
+        image: redis:alpine
+        container_name: lks_redis
+        ports:
+            - 6379:6379
+        networks: 
+            - lks_network
+        command: redis-server --requirepass YOUR_REDIS_PASSWORD
+
+    mongo_db:
+        image: mongo:latest
+        container_name: lks_mongo_db
+        environment: 
+            - MONGO_INITDB_ROOT_USERNAME=YOUR_MONGODB_USERNAME
+            - MONGO_INITDB_ROOT_PASSWORD=YOUR_MONGODB_PASSWORD
+            - MONGO_INITDB_DATABASE=YOUR_MONGO_DATABASE
+        volumes: 
+            # - ./db/init_mongo.js:/docker-entrypoint-initdb.d/init_mongo.js:ro
+            - mongo_data:/data/db
+        ports:
+            - 27017:27017
+        networks: 
+            - lks_network
+
+networks: 
+    lks_network:
+        name: lks_network

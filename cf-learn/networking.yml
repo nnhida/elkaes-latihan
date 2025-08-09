@@ -1,0 +1,166 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: networking cf
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags: 
+        - Key: Name
+          Value: my-vpc 
+
+  publicsubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: 10.10.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: Public-Subnet-1a
+      VpcId: !Ref VPC
+
+  publicsubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      CidrBlock: 10.10.2.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: Public-Subnet-1b
+      VpcId: !Ref VPC
+
+  privatesubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: 10.10.3.0/24
+      MapPublicIpOnLaunch: false
+      Tags: 
+        - Key: Name
+          Value: Private-Subnet-1a
+      VpcId: !Ref VPC
+
+  privatesubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      CidrBlock: 10.10.4.0/24
+      MapPublicIpOnLaunch: false
+      Tags: 
+        - Key: Name
+          Value: Private-Subnet-1b
+      VpcId: !Ref VPC
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: my-igw 
+
+  igwAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+
+  publicRTB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: publicRTB
+      VpcId: !Ref VPC
+
+  publicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW 
+      RouteTableId: !Ref publicRTB
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: my-eip
+
+  NAT:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt EIP.AllocationId
+      ConnectivityType: public
+      SubnetId: !Ref publicsubnet1a
+      Tags: 
+        - Key: Name
+          Value: my-nat
+
+  privateRTB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: privateRTB
+      VpcId: !Ref VPC
+
+  privateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NAT 
+      RouteTableId: !Ref privateRTB
+
+  publicAss1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref publicRTB
+      SubnetId: !Ref publicsubnet1a
+
+  publicAss1b:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref publicRTB
+      SubnetId: !Ref publicsubnet1b
+
+  privateAss1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privateRTB
+      SubnetId: !Ref privatesubnet1a
+
+  privateAss1b:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privateRTB
+      SubnetId: !Ref privatesubnet1b
+
+  SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for RDS
+      GroupName: rds-sg
+      SecurityGroupEgress: 
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+      Tags: 
+        - Key: Name
+          Value: rds-sg
+      VpcId: !Ref VPC
+
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: template for lks database
+
+Parameters: 
+  SG: 
+    Description: "SG-DB"
+    Type: String
+  VPC:
+    Description: "lks-vpc"
+    Type: String
+  Subnet1:
+    Description: "subnet1"
+    Type: String
+  Subnet2:
+    Description: "subnet2"
+    Type: String
+  Subnet3:
+    Description: "subnet3"
+    Type: String
+
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for db
+      DBSubnetGroupName: lks-newsubnetgroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      Tags: 
+        - Key: Name
+          Value: lks-subnetgroup
+  DB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceIdentifier: dbiottt
+      DBInstanceClass: db.t3.micro
+      DBName: lksdb
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      DeletionProtection: false
+      Engine: mariadb
+      EngineVersion: 10.5.25
+      MasterUsername: admin
+      MasterUserPassword: Lksncc2024!
+      MultiAZ: false
+      NetworkType: IPV4
+      Port: 3306
+      PubliclyAccessible: false
+      StorageType: gp2
+      Tags: 
+        - Key: Name
+          Value: dbiot
+      VPCSecurityGroups: 
+        - !Ref SG

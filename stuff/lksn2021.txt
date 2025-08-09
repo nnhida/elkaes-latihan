@@ -1,0 +1,54 @@
+#!/bin/bash
+sudo -u ec2-user -i << 'EOF'
+sudo yum update -y
+sudo yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+sudo yum install git nodejs amazon-efs-utils -y
+git clone https://github.com/handipradana/apps-cloud-lksn2022.git
+cd apps-cloud-lksn2022/backend
+touch .env
+echo "NODE_ENV = production" >> .env
+echo "DB_HOST = database-1.clou0aw4i4l5.us-west-2.rds.amazonaws.com" >> .env
+echo "DB_USER = admin" >> .env
+echo "DB_PASS = adminpassword" >> .env
+echo "DB_NAME = lksdb" >> .env
+echo "AWS_ACCESS_KEY = AKIA5JMSUAI65RWDK4IP" >> .env
+echo "AWS_SECRET_ACCESS_KEY = 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" >> .env
+echo "AWS_BUCKET_NAME = lks-hida-jawatimur" >> .env
+echo "REDIS_HOST = master.lks-redis.tjp5ym.usw2.cache.amazonaws.com" >> .env
+echo "LOG_PATH = /home/ec2-user/efs/log" >> .env
+echo "CACHE_PATH = /home/ec2-user/efs/cache" >> .env
+mkdir /home/ec2-user/efs
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 180.10.5.60:/ /home/ec2-user/efs
+sudo chown ec2-user:ec2-user /home/ec2-user/efs
+mkdir -p /home/ec2-user/efs/log /home/ec2-user/efs/cache
+npm install
+sudo npm install pm2 -g
+npm run start-apps
+EOF
+
+#!/bin/bash
+sudo -u ec2-user -i << 'EOF'
+sudo yum update -y
+sudo yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+sudo yum install git nodejs amazon-efs-utils -y
+git clone https://github.com/handipradana/apps-cloud-lksn2022.git
+cd apps-cloud-lksn2022/frontend
+touch .env
+echo "REACT_APP_BACKEND = http://lks-backend-1380164018.us-west-2.elb.amazonaws.com" >> .env
+echo "REDIS_HOST=master.lks-redis.tjp5ym.usw2.cache.amazonaws.com" >> .env
+echo "REDIS_PORT = 6379" >> .env
+echo "REDIS_PASS = iniadalahCloud2022!" >> .env
+echo "LOG_PATH = /home/ec2-user/efs/log" >> .env
+echo "CACHE_PATH = /home/ec2-user/efs/cache" >> .env
+mkdir /home/ec2-user/efs
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 180.10.5.60:/ /home/ec2-user/efs
+sudo chown ec2-user:ec2-user /home/ec2-user/efs
+mkdir -p /home/ec2-user/efs/log /home/ec2-user/efs/cache
+npm install
+sudo npm install pm2 -g
+sudo npm install serve -g
+npm run build
+pm2 start "serve -s build -l tcp://0.0.0.0:3000" --name frontend
+EOF

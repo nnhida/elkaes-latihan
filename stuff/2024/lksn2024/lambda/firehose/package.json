@@ -1,0 +1,19 @@
+{
+  "name": "firehose",
+  "version": "1.0.0",
+  "description": "`aws-sdk`<br/>\r `@aws-sdk/client-s3`<br/>\r `csv-stringify` <br/>\r `csv-parse` <br/>\r `buffer`",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.717.0",
+    "aws-sdk": "^2.1692.0",
+    "buffer": "^6.0.3",
+    "csv-parse": "^5.6.0",
+    "csv-stringify": "^6.5.2"
+  }
+}

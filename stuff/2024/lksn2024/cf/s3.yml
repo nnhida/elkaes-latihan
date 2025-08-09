@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: template for lks S3
+
+Resources:
+  Bucket1:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: lks-bucketweb-jawatimur
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  Bucket1Policy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket1
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 
+              - 's3:GetObject'
+            Effect: Allow
+            Principal: '*'
+            Resource: "arn:aws:s3:::lks-bucketweb-jawatimur/*"
+
+  Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: lks-bucketfirehose-jawatimur
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      VersioningConfiguration: 
+        Status: Enabled
+
+  Bucket2Policy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket2
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 
+              - 's3:GetObject'
+            Effect: Allow
+            Principal: '*'
+            Resource: "arn:aws:s3:::lks-bucketfirehose-jawatimur/*"
+
+  Bucket3:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: lks-bucketmodel-jawatimur
+      LifecycleConfiguration: 
+        Rules: 
+          - Id: bucket-rule
+            Status: Enabled
+            ExpirationInDays: 365
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: DEEP_ARCHIVE
+
+  Bucket3Policy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket3
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 
+              - 's3:GetObject'
+            Effect: Allow
+            Principal: '*'
+            Condition:
+              NotIpAddress:
+                "aws:sourceIp": "180.248.38.49"
+            Resource: "arn:aws:s3:::lks-bucketmodel-jawatimur/*"
+
+

@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  variables:
+    ECR_REPO: 913524916797.dkr.ecr.us-east-1.amazonaws.com/course-catalog
+    ECR_REGION: us-east-1
+    CONTAINER_NAME: course-catalog
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+  pre_build:
+    commands:
+      - echo "Install Dependencies and login into ECR"
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 913524916797.dkr.ecr.us-east-1.amazonaws.com
+  build:
+    commands:
+      - echo "Run unit testing and build docker image"
+      - echo "AWS_ACCESS_KEY="$AWS_ACCESS_KEY >> .env.production
+      - echo "AWS_SECRET_KEY="$AWS_SECRET_KEY >> .env.production
+      - docker build -t course-catalog:latest --build-arg NODE_ENV=$NODE_ENV --build-arg PORT=$PORT .
+      - docker tag course-catalog:latest 913524916797.dkr.ecr.us-east-1.amazonaws.com/course-catalog:latest
+  post_build:
+    commands:
+      - echo "push the image to ECR.."
+      - docker push 913524916797.dkr.ecr.us-east-1.amazonaws.com/course-catalog:latest
+      - printf '[{"name":"%s","imageUri":"%s"}]' course-catalog 913524916797.dkr.ecr.us-east-1.amazonaws.com/course-catalog:latest > imagedefinitions.json
+      - echo "build complete.."
+
+reports:
+  test-report:
+    files:
+      - 'report/test-result.xml'
+    file-format: JUNITXML
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    - report/test-result.xml
+    - Dockerrun.aws.json

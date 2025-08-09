@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: template for lks iot
+
+Resources:
+  iotThing:
+    Type: AWS::IoT::Thing
+    Properties:
+      ThingName: lksiot
+
+  iotPolicies:
+    Type: AWS::IoT::Policy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'iot:Connect'
+              - 'iot:Publish'
+              - 'iot:Receive'
+              - 'iot:Subscribe'
+            Effect: Allow
+            Resource: '*'
+      PolicyName: lksiotpolices
+      Tags: 
+        - Key: Name
+          Value: lksiotpolices
+

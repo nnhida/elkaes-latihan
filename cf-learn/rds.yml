@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: networking cf
+
+Parameters:
+  SG:
+    Description: "sg for db"
+    Type: String
+  Subnet1:
+    Description: "Subnet 1 for db"
+    Type: String
+  Subnet2:
+    Description: "Subnet 2 for db"
+    Type: String
+
+Resources:
+  SBgroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: subnet group for rds
+      DBSubnetGroupName: mydb-subnets
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+      Tags: 
+        - Key: Name
+          Value: mydb-subnets
+  RDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      AutoMinorVersionUpgrade: false
+      DBInstanceClass: db.t3.micro
+      DBInstanceIdentifier: my-db
+      DBName: mydb
+      DBSubnetGroupName: !Ref SBgroup
+      DeletionProtection: false
+      Engine: mysql
+      EngineVersion: 8.4.4
+      MasterUsername: admin
+      MasterUserPassword: adminpassword
+      MultiAZ: false
+      NetworkType: IPV4
+      Port: 3306
+      PubliclyAccessible: false
+      StorageType: gp2
+      Tags: 
+        - Key: Name
+          Value: my-db
+      VPCSecurityGroups: 
+        - !Ref SG

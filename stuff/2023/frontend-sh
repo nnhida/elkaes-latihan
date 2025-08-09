@@ -1,0 +1,17 @@
+#!/bin/bash
+sudo -u ec2-user -i << 'EOF'
+sudo yum update -y
+sudo yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+sudo yum install git nodejs -y
+git clone https://github.com/betuah/lks-serverless/
+cd lks-serverless/front-end
+touch .env
+ehco "VITE_BASE_API_URL=https://n7zpyqdc3j.execute-api.us-east-1.amazonaws.com/prod"
+echo "VITE_WEBSOCKET_URL=https://8i42q3ur4e.execute-api.us-east-1.amazonaws.com/prod"
+echo "VITE_API_TOKEN=930da7979e430662818ee07b0f1375f1"
+echo "VITE_DEVICE_ID=frontEnd-001"
+npm install
+sudo npm i pm2 -g
+npm run build
+pm2 start npm -- dev

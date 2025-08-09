@@ -1,0 +1,4 @@
+endpoint=lks-db.ckb2qs0we42t.us-east-1.rds.amazonaws.com
+dbname=lks_db
+username=lksuswer
+password=inikatasandilksuswer

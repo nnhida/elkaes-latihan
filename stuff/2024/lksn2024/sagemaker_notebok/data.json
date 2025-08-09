@@ -1,0 +1,65 @@
+[
+  {
+    "timestamp": "2024-12-31T14:26:47.043332",
+    "temperature": 26.32,
+    "humidity": 53.5,
+    "fire_intensity": 16.93,
+    "gas_concentration": 388.94,
+    "distance": 232.8,
+    "wind_speed": 23.11
+  },
+  {
+    "timestamp": "2024-12-31T14:26:57.044110",
+    "temperature": 23.29,
+    "humidity": 59,
+    "fire_intensity": 58.61,
+    "gas_concentration": 42.47,
+    "distance": 273.96,
+    "wind_speed": 33.74
+  },
+  {
+    "timestamp": "2024-12-31T14:27:07.045307",
+    "temperature": 20.1,
+    "humidity": 42.81,
+    "fire_intensity": 37.64,
+    "gas_concentration": 91.23,
+    "distance": 405.21,
+    "wind_speed": 12.07
+  },
+  {
+    "timestamp": "2024-12-31T14:27:17.046710",
+    "temperature": 25.2,
+    "humidity": 52.16,
+    "fire_intensity": 45.78,
+    "gas_concentration": 433.32,
+    "distance": 452.45,
+    "wind_speed": 2.97
+  },
+  {
+    "timestamp": "2024-12-31T14:27:27.048060",
+    "temperature": 29.91,
+    "humidity": 48.02,
+    "fire_intensity": 50.13,
+    "gas_concentration": 445.86,
+    "distance": 157.52,
+    "wind_speed": 25
+  },
+  {
+    "timestamp": "2024-12-31T14:27:37.050021",
+    "temperature": 21.6,
+    "humidity": 59.69,
+    "fire_intensity": 9.02,
+    "gas_concentration": 399.89,
+    "distance": 15.86,
+    "wind_speed": 8.17
+  },
+  {
+    "timestamp": "2024-12-31T14:27:47.051373",
+    "temperature": 24.05,
+    "humidity": 49.32,
+    "fire_intensity": 11.22,
+    "gas_concentration": 173.59,
+    "distance": 128.28,
+    "wind_speed": 46.48
+  }
+]

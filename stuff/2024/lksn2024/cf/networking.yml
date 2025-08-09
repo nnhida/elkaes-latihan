@@ -1,0 +1,200 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: a template for lks networking
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.15.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags: 
+        - Key: Name
+          Value: lks-2021-vpc
+
+  subnetpub2a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-west-2a
+      CidrBlock: 172.15.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: subnetpub1
+      VpcId: !Ref VPC
+
+  subnetpub2b:
+    Type: AWS::EC2::Subnet
+    Properties:      
+      AvailabilityZone: us-west-2b
+      CidrBlock: 172.15.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: subnetpub2
+      VpcId: !Ref VPC
+
+  subnetpub2c:
+    Type: AWS::EC2::Subnet
+    Properties:      
+      AvailabilityZone: us-west-2c
+      CidrBlock: 172.15.2.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: subnetpub3
+      VpcId: !Ref VPC
+
+  subnetpriv2a:
+    Type: AWS::EC2::Subnet
+    Properties:      
+      AvailabilityZone: us-west-2a
+      CidrBlock: 172.15.3.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: subnetpriv1
+      VpcId: !Ref VPC
+
+  subnetpriv2b:
+    Type: AWS::EC2::Subnet
+    Properties:      
+      AvailabilityZone: us-west-2b
+      CidrBlock: 172.15.4.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: subnetpriv2
+      VpcId: !Ref VPC
+
+  subnetpriv2c:
+    Type: AWS::EC2::Subnet
+    Properties:      
+      AvailabilityZone: us-west-2c
+      CidrBlock: 172.15.5.0/24
+      MapPublicIpOnLaunch: true
+      Tags: 
+        - Key: Name
+          Value: subnetpriv3
+      VpcId: !Ref VPC
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: lks-eip
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: lks-IWG
+
+  igwAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+
+  natGW:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt EIP.AllocationId
+      SubnetId: !Ref subnetpub2a
+      Tags: 
+        - Key: Name
+          Value: lks-natGW
+
+  pubRTB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: lks-pub-rtb
+      VpcId: !Ref VPC
+
+  privRTB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: lks-priv-rtb
+      VpcId: !Ref VPC
+
+  pubRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref pubRTB
+
+  privRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGW
+      RouteTableId: !Ref privRTB
+
+  subnetpub2aAss:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref pubRTB
+      SubnetId: !Ref subnetpub2a
+
+  subnetpub2bAss:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref pubRTB
+      SubnetId: !Ref subnetpub2b
+
+  subnetpub2cAss:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref pubRTB
+      SubnetId: !Ref subnetpub2c
+
+  subnetpriv2aAss:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privRTB
+      SubnetId: !Ref subnetpriv2a
+
+  subnetpriv2bAss:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privRTB
+      SubnetId: !Ref subnetpriv2b
+
+  subnetpriv2cAss:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privRTB
+      SubnetId: !Ref subnetpriv2c
+
+  SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: security group for RDS (3306), allow the SG to all private subnets
+      GroupName: SG-DB
+      SecurityGroupEgress: 
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 172.15.3.0/24
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 172.15.4.0/24
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 172.15.5.0/24
+      Tags: 
+        - Key: Name
+          Value: SG-DB
+      VpcId: !Ref VPC

@@ -1,0 +1,6 @@
+Authorization:1876fd7f4151fbbd9c9758c0f5844c77
+Deviceid:frontEnd-002
+
+https://7p7u9vp21e.execute-api.us-east-1.amazonaws.com/prod
+
+Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,authorization,deviceid,Deviceid

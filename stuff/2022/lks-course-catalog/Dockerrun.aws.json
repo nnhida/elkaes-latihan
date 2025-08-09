@@ -1,0 +1,12 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+        "Name": "913524916797.dkr.ecr.us-east-1.amazonaws.com/course-catalog"
+    },
+    "Ports": [
+        {
+            "ContainerPort": 8000,
+            "HostPort": 8080
+        }
+    ]
+}
